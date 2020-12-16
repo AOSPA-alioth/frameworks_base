@@ -405,14 +405,7 @@ class KeyguardUnlockAnimationController @Inject constructor(
      * the device.
      */
     fun canPerformInWindowLauncherAnimations(): Boolean {
-        // TODO(b/278086361): Refactor in-window animations.
-        return !featureFlags.isEnabled(Flags.KEYGUARD_WM_STATE_REFACTOR) &&
-                isNexusLauncherUnderneath() &&
-                // If the launcher is underneath, but we're about to launch an activity, don't do
-                // the animations since they won't be visible.
-                !notificationShadeWindowController.isLaunchingActivity &&
-                launcherUnlockController != null &&
-                !biometricUnlockControllerLazy.get().isWakeAndUnlock
+        return false
     }
 
     /**
