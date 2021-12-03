@@ -291,6 +291,8 @@ public class EdgeBackGestureHandler implements PluginListener<NavigationEdgeBack
     private SimpleDateFormat mLogDateFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.US);
     private Date mTmpLogDate = new Date();
 
+    private boolean mBlockedGesturalNavigation;
+
     private final GestureNavigationSettingsObserver mGestureNavigationSettingsObserver;
 
     private final NavigationEdgeBackPlugin.BackCallback mBackCallback =
@@ -589,6 +591,10 @@ public class EdgeBackGestureHandler implements PluginListener<NavigationEdgeBack
         mUserTracker.removeCallback(mUserChangedCallback);
     }
 
+    public void setBlockedGesturalNavigation(boolean blocked) {
+        mBlockedGesturalNavigation = blocked;
+    }
+
     /**
      * @see NavigationModeController.ModeChangedListener#onNavigationModeChanged
      */
@@ -683,7 +689,11 @@ public class EdgeBackGestureHandler implements PluginListener<NavigationEdgeBack
                         "edge-swipe", mDisplayId);
                 mInputEventReceiver = new InputChannelCompat.InputEventReceiver(
                         mInputMonitor.getInputChannel(), Looper.getMainLooper(),
-                        Choreographer.getInstance(), this::onInputEvent);
+                        Choreographer.getInstance(), event -> {
+                            if (!mBlockedGesturalNavigation) {
+                                onInputEvent(event);
+                            }
+                        });
 
                 // Add a nav bar panel window
                 mIsNewBackAffordanceEnabled = mFeatureFlags.isEnabled(Flags.NEW_BACK_AFFORDANCE);
