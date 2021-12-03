@@ -364,4 +364,9 @@ oneway interface IStatusBar
      * Toggles flashlight of the device
      */
     void toggleCameraFlash();
+
+    /**
+     * Used to block or unblock usage of gestural navigation
+     */
+    void setBlockedGesturalNavigation(boolean blocked);
 }
