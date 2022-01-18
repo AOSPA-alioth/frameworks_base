@@ -132,12 +132,6 @@ public class PropImitationHooks {
         } else if (!sStockFp.isEmpty() && packageName.equals(PACKAGE_ARCORE)) {
             dlog("Setting stock fingerprint for: " + packageName);
             setPropValue("FINGERPRINT", sStockFp);
-        } else if (sSpoofGapps && (packageName.equals(PACKAGE_VELVET)
-                || packageName.equals(PACKAGE_ASI)
-                || (packageName.equals(PACKAGE_GMS)
-                    && processName.equals(PROCESS_GMS_PERSISTENT)))) {
-            dlog("Spoofing Pixel 5 for: " + packageName + " process: " + processName);
-            sPixelProps.forEach(PropImitationHooks::setPropValue);
         } else if (sIsPhotos) {
             dlog("Spoofing Pixel 1 for Google Photos");
             sPixelOneProps.forEach((PropImitationHooks::setPropValue));
