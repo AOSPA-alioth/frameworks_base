@@ -343,6 +343,7 @@ constructor(
         systemIcons.setOnHoverListener(
             statusOverlayHoverListenerFactory.createListener(systemIcons)
         )
+        updateResources()
     }
 
     override fun onViewDetached() {
