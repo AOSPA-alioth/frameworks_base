@@ -6035,6 +6035,12 @@ public final class Settings {
                 "notification_sound_vib_screen_on";
 
         /**
+         * Whether to show advanced reboot options in power menu
+         * @hide
+         */
+        public static final String ADVANCED_REBOOT = "advanced_reboot";
+
+        /**
          * Force full screen for devices with cutout
          * @hide
          */
