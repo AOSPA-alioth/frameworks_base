@@ -233,6 +233,16 @@ public class ViewConfiguration {
      * Maximum velocity to initiate a fling, as measured in dips per second
      */
     private static final int MAXIMUM_FLING_VELOCITY = 21000;
+    
+    /**
+     * Minimum velocity to initiate a gesture fling, as measured in dips per second
+     */
+    private static final int MINIMUM_GESTURE_FLING_VELOCITY = 50;
+
+    /**
+     * Maximum velocity to initiate a gesture fling, as measured in dips per second
+     */
+    private static final int MAXIMUM_GESTURE_FLING_VELOCITY = 8000;
 
     /** Value used as a minimum fling velocity, when fling is not supported. */
     private static final int NO_FLING_MIN_VELOCITY = Integer.MAX_VALUE;
@@ -340,7 +350,9 @@ public class ViewConfiguration {
     private final int mEdgeSlop;
     private final int mFadingEdgeLength;
     private final int mMinimumFlingVelocity;
+    private final int mMinimumGestureFlingVelocity;
     private final int mMaximumFlingVelocity;
+    private final int mMaximumGestureFlingVelocity;
     private final int mMinimumRotaryEncoderFlingVelocity;
     private final int mMaximumRotaryEncoderFlingVelocity;
     private final int mScrollbarSize;
@@ -387,7 +399,9 @@ public class ViewConfiguration {
         mEdgeSlop = EDGE_SLOP;
         mFadingEdgeLength = FADING_EDGE_LENGTH;
         mMinimumFlingVelocity = MINIMUM_FLING_VELOCITY;
+        mMinimumGestureFlingVelocity = MINIMUM_GESTURE_FLING_VELOCITY;
         mMaximumFlingVelocity = MAXIMUM_FLING_VELOCITY;
+        mMaximumGestureFlingVelocity = MAXIMUM_GESTURE_FLING_VELOCITY;
         mMinimumRotaryEncoderFlingVelocity = MINIMUM_FLING_VELOCITY;
         mMaximumRotaryEncoderFlingVelocity = MAXIMUM_FLING_VELOCITY;
         mScrollbarSize = SCROLL_BAR_SIZE;
@@ -552,6 +566,11 @@ public class ViewConfiguration {
                 com.android.internal.R.integer.config_smartSelectionInitializingTimeoutMillis);
         mPreferKeepClearForFocusEnabled = res.getBoolean(
                 com.android.internal.R.bool.config_preferKeepClearForFocus);
+                
+        mMinimumGestureFlingVelocity = res.getDimensionPixelSize(
+                com.android.internal.R.dimen.config_viewMinGestureFlingVelocity);
+        mMaximumGestureFlingVelocity = res.getDimensionPixelSize(
+                com.android.internal.R.dimen.config_viewMaxGestureFlingVelocity);
     }
 
     /**
@@ -882,10 +901,25 @@ public class ViewConfiguration {
     }
 
     /**
+     * @return Minimum velocity to initiate a gesture fling, as measured in dips per second.
+     *
+     */
+    public static int getMinimumGestureFlingVelocity() {
+        return MINIMUM_GESTURE_FLING_VELOCITY;
+    }
+
+    /**
      * @return Minimum velocity to initiate a fling, as measured in pixels per second.
      */
     public int getScaledMinimumFlingVelocity() {
         return mMinimumFlingVelocity;
+    }
+
+    /**
+     * @return Minimum velocity to initiate a gesture fling, as measured in pixels per second.
+     */
+    public int getScaledMinimumGestureFlingVelocity() {
+        return mMinimumGestureFlingVelocity;
     }
 
     /**
@@ -899,10 +933,25 @@ public class ViewConfiguration {
     }
 
     /**
+     * @return Maximum velocity to initiate a gesture fling, as measured in dips per second.
+     *
+     */
+    public static int getMaximumGestureFlingVelocity() {
+        return MAXIMUM_GESTURE_FLING_VELOCITY;
+    }
+
+    /**
      * @return Maximum velocity to initiate a fling, as measured in pixels per second.
      */
     public int getScaledMaximumFlingVelocity() {
         return mMaximumFlingVelocity;
+    }
+
+    /**
+     * @return Maximum velocity to initiate a gesture fling, as measured in pixels per second.
+     */
+    public int getScaledMaximumGestureFlingVelocity() {
+        return mMaximumGestureFlingVelocity;
     }
 
     /**
