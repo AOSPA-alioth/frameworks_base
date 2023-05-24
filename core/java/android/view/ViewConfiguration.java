@@ -232,7 +232,7 @@ public class ViewConfiguration {
     /**
      * Maximum velocity to initiate a fling, as measured in dips per second
      */
-    private static final int MAXIMUM_FLING_VELOCITY = 8000;
+    private static final int MAXIMUM_FLING_VELOCITY = 21000;
 
     /** Value used as a minimum fling velocity, when fling is not supported. */
     private static final int NO_FLING_MIN_VELOCITY = Integer.MAX_VALUE;
