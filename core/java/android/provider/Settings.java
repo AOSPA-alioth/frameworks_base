@@ -11872,6 +11872,15 @@ public final class Settings {
                 "accessibility_floating_menu_opacity";
 
         /**
+         * Our GameSpace can't write to device_config directly [GTS]
+         * Use this as intermediate to pass device_config property
+         * from our GameSpace to com.android.server.app.GameManagerService
+         * so we can set the device_config property from there.
+         * @hide
+         */
+        public static final String GAME_OVERLAY = "game_overlay";
+
+        /**
          * Prompts the user to the Accessibility button is replaced with the floating menu.
          * <ul>
          *    <li> 0 = disabled </li>
