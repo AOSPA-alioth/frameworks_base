@@ -75,14 +75,13 @@ public class PropImitationHooks {
         "FINGERPRINT", "google/redfin/redfin:13/TQ3A.230705.001/10216780:user/release-keys"
     );
 
-    private static final Map<String, Object> sPixelXLProps = Map.of(
-        "BRAND", "google",
+    private static final Map<String, String> sPixelOneProps = Map.of(
+        "PRODUCT", "sailfish",
+        "DEVICE", "sailfish",
         "MANUFACTURER", "Google",
-        "DEVICE", "marlin",
-        "PRODUCT", "marlin",
-        "MODEL", "Pixel XL",
-        "FINGERPRINT", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys"
-    );
+        "BRAND", "google",
+        "MODEL", "Pixel",
+        "FINGERPRINT", "google/sailfish/sailfish:10/QP1A.191005.007.A3/5972272:user/release-keys
 
     private static final Set<String> sPixelFeatures = Set.of(
         "PIXEL_2017_PRELOAD",
@@ -139,8 +138,8 @@ public class PropImitationHooks {
             dlog("Spoofing Pixel 5 for: " + packageName + " process: " + processName);
             sPixelProps.forEach(PropImitationHooks::setPropValue);
         } else if (sIsPhotos) {
-            dlog("Spoofing Pixel XL for Google Photos");
-            sPixelXLProps.forEach((PropImitationHooks::setPropValue));
+            dlog("Spoofing Pixel 1 for Google Photos");
+            sPixelOneProps.forEach((PropImitationHooks::setPropValue));
         } else if (!sNetflixModel.isEmpty() && packageName.equals(PACKAGE_NETFLIX)) {
             dlog("Setting model to " + sNetflixModel + " for Netflix");
             setPropValue("MODEL", sNetflixModel);
