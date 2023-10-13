@@ -640,6 +640,8 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
     private int mGoneToDreamingTransitionTranslationY;
     private int mLockscreenToOccludedTransitionTranslationY;
 
+    private boolean mForceFlingAnimationForTest = false;
+
     /**
      * For PanelView fling perflock call
      */
@@ -2169,8 +2171,16 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
                 }
             }
         });
+        if (!mScrimController.isScreenOn() && !mForceFlingAnimationForTest) {
+            animator.setDuration(1);
+        }
         setAnimator(animator);
         animator.start();
+    }
+
+    @VisibleForTesting
+    void setForceFlingAnimationForTest(boolean force) {
+        mForceFlingAnimationForTest = force;
     }
 
     @VisibleForTesting
