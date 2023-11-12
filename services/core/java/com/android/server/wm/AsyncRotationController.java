@@ -22,7 +22,9 @@ import static android.view.WindowManager.LayoutParams.TYPE_NAVIGATION_BAR;
 import static com.android.server.wm.SurfaceAnimator.ANIMATION_TYPE_TOKEN_TRANSFORM;
 
 import android.annotation.IntDef;
+import android.hardware.power.Mode;
 import android.os.HandlerExecutor;
+import android.os.PowerManagerInternal;
 import android.util.ArrayMap;
 import android.util.BoostFramework;
 import android.util.Slog;
@@ -33,6 +35,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.android.internal.R;
+import com.android.server.LocalServices;
 
 import java.io.PrintWriter;
 import java.lang.annotation.Retention;
@@ -348,12 +351,20 @@ class AsyncRotationController extends FadeAnimationController implements Consume
                     mIsLatencyPerfLockAcquired = false;
                 }
                 onAllCompleted();
+                setActivityBoost(false);
                 return true;
             }
         }
         // The case (legacy fixed rotation) will be handled by completeAll() when all seamless
         // windows are done.
         return false;
+    }
+
+    protected void setActivityBoost(boolean enable) {
+        PowerManagerInternal mPowerManagerInternal = LocalServices.getService(PowerManagerInternal.class);
+        if (mPowerManagerInternal != null) {
+            mPowerManagerInternal.setPowerMode(Mode.LAUNCH, enable);
+        }
     }
 
     /**
@@ -365,6 +376,7 @@ class AsyncRotationController extends FadeAnimationController implements Consume
              mPerf.perfHint(BoostFramework.VENDOR_HINT_ROTATION_LATENCY_BOOST, null);
              mIsLatencyPerfLockAcquired = true;
          }
+        setActivityBoost(true);
         for (int i = mTargetWindowTokens.size() - 1; i >= 0; i--) {
             final WindowToken windowToken = mTargetWindowTokens.keyAt(i);
             final Operation op = mTargetWindowTokens.valueAt(i);
