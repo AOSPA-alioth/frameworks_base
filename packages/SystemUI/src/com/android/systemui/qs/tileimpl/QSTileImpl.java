@@ -38,6 +38,8 @@ import android.metrics.LogMaker;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Vibrator;
+import android.os.VibrationEffect;
 import android.text.format.DateUtils;
 import android.util.ArraySet;
 import android.util.Log;
@@ -155,6 +157,8 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
      */
     abstract protected void handleUpdateState(TState state, Object arg);
 
+    protected Vibrator mVibrator;
+
     /**
      * Declare the category of this tile.
      *
@@ -201,6 +205,8 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
         mMetricsLogger = metricsLogger;
         mStatusBarStateController = statusBarStateController;
         mActivityStarter = activityStarter;
+
+        mVibrator = mContext.getSystemService(Vibrator.class);
 
         resetStates();
         mUiHandler.post(() -> mLifecycle.setCurrentState(CREATED));
@@ -282,6 +288,12 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
 
     // safe to call from any thread
 
+    public void vibrateTile() {
+        if (mVibrator != null && mVibrator.hasVibrator()) {
+                mVibrator.vibrate(VibrationEffect.get(VibrationEffect.EFFECT_CLICK));
+        }
+    }
+
     public void addCallback(Callback callback) {
         mHandler.obtainMessage(H.ADD_CALLBACK, callback).sendToTarget();
     }
@@ -306,6 +318,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
         if (!mFalsingManager.isFalseTap(FalsingManager.LOW_PENALTY)) {
             mHandler.obtainMessage(H.CLICK, eventId, 0, view).sendToTarget();
         }
+        vibrateTile();
     }
 
     public void secondaryClick(@Nullable View view) {
@@ -333,6 +346,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
         if (!mFalsingManager.isFalseLongTap(FalsingManager.LOW_PENALTY)) {
             mHandler.obtainMessage(H.LONG_CLICK, eventId, 0, view).sendToTarget();
         }
+        vibrateTile();
     }
 
     public LogMaker populate(LogMaker logMaker) {
