@@ -66,7 +66,7 @@ public class PropImitationHooks {
     private static final String FEATURE_NEXUS_PRELOAD =
             "com.google.android.apps.photos.NEXUS_PRELOAD";
 
-    private static final Map<String, Object> sPixelProps = Map.of(
+    private static final Map<String, String> sPixelProps = Map.of(
         "BRAND", "google",
         "MANUFACTURER", "Google",
         "DEVICE", "redfin",
@@ -81,7 +81,8 @@ public class PropImitationHooks {
         "MANUFACTURER", "Google",
         "BRAND", "google",
         "MODEL", "Pixel",
-        "FINGERPRINT", "google/sailfish/sailfish:10/QP1A.191005.007.A3/5972272:user/release-keys
+        "FINGERPRINT", "google/sailfish/sailfish:10/QP1A.191005.007.A3/5972272:user/release-keys"
+    );
 
     private static final Set<String> sPixelFeatures = Set.of(
         "PIXEL_2017_PRELOAD",
@@ -241,7 +242,7 @@ public class PropImitationHooks {
             }
         }
         return has;
-    
+    }
 
     public static boolean shouldBypassTaskPermission(Context context) {
         // GMS doesn't have MANAGE_ACTIVITY_TASKS permission
