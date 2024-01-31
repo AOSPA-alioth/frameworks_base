@@ -34,4 +34,7 @@
     <!-- QuickQS BrightnessBar -->
     <dimen name="new_qqs_brightness_margin_top">4dp</dimen>
 
+    <!-- HD calling icon -->
+    <dimen name="signal_icon_viewport_size">24dp</dimen>
+
 </resources>
