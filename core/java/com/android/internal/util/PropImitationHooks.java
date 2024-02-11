@@ -35,6 +35,8 @@ import com.android.internal.R;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,6 +67,63 @@ public class PropImitationHooks {
 
     private static final String FEATURE_NEXUS_PRELOAD =
             "com.google.android.apps.photos.NEXUS_PRELOAD";
+
+    private static Map<String, String> sMainSpoofProps;
+    private static final Map<String, String> asusROG1Props = createGameProps("ASUS_Z01QD", "Asus");
+    private static final Map<String, String> asusROG3Props = createGameProps("ASUS_I003D", "Asus");
+    private static final Map<String, String> xperia5Props = createGameProps("Lenovo TB-9707F", "lenovo");
+    private static final Map<String, String> op8ProProps = createGameProps("IN2020", "OnePlus");
+    private static final Map<String, String> op9RProps = createGameProps("LE2101", "OnePlus");
+    private static final Map<String, String> xmMi11TProps = createGameProps("21081111RG", "Xiaomi");
+    private static final Map<String, String> xmF4Props = createGameProps("22021211RG", "Xiaomi");
+    private static Map<String, String> createGameProps(String model, String manufacturer) {
+        Map<String, String> props = new HashMap<>();
+        props.put("MODEL", model);
+        props.put("MANUFACTURER", manufacturer);
+        return props;
+    }
+
+    private static final Set<String> packagesToChangeROG1 = new HashSet<>(Arrays.asList(
+            "com.madfingergames.legends"
+    ));
+    private static final Set<String> packagesToChangeROG3 = new HashSet<>(Arrays.asList(
+            "com.pearlabyss.blackdesertm",
+            "com.pearlabyss.blackdesertm.gl"
+    ));
+    private static final Set<String> packagesToChangeXP5 = new HashSet<>(Arrays.asList(
+            "com.activision.callofduty.shooter",
+            "com.garena.game.codm",
+            "com.tencent.tmgp.kr.codm",
+            "com.vng.codmvn"
+    ));
+    private static final Set<String> packagesToChangeOP8P = new HashSet<>(Arrays.asList(
+            "com.netease.lztgglobal",
+            "com.pubg.imobile",
+            "com.pubg.krmobile",
+            "com.rekoo.pubgm",
+            "com.riotgames.league.wildrift",
+            "com.riotgames.league.wildrifttw",
+            "com.riotgames.league.wildriftvn",
+            "com.tencent.ig",
+            "com.tencent.tmgp.pubgmhd",
+            "com.vng.pubgmobile"
+    ));
+    private static final Set<String> packagesToChangeOP9R = new HashSet<>(Arrays.asList(
+            "com.epicgames.fortnite",
+            "com.epicgames.portal"
+    ));
+    private static final Set<String> packagesToChange11T = new HashSet<>(Arrays.asList(
+            "com.ea.gp.apexlegendsmobilefps",
+            "com.levelinfinite.hotta.gp",
+            "com.mobile.legends",
+            "com.supercell.clashofclans",
+            "com.tencent.tmgp.sgame",
+            "com.vng.mlbbvn"
+    ));
+    private static final Set<String> packagesToChangeF4 = new HashSet<>(Arrays.asList(
+            "com.dts.freefiremax",
+            "com.dts.freefireth"
+    ));
 
     private static final Map<String, String> sPixelProps = Map.of(
         "BRAND", "google",
@@ -135,9 +194,39 @@ public class PropImitationHooks {
         } else if (sIsPhotos) {
             dlog("Spoofing Pixel 1 for Google Photos");
             sPixelOneProps.forEach((PropImitationHooks::setPropValue));
-        } else if (!sNetflixModel.isEmpty() && packageName.equals(PACKAGE_NETFLIX)) {
-            dlog("Setting model to " + sNetflixModel + " for Netflix");
-            setPropValue("MODEL", sNetflixModel);
+        } else {
+	    spoofGameProps(packageName);
+        }
+    }
+
+    private static void spoofGameProps(String packageName) {
+        if (SystemProperties.getBoolean("persist.sys.pixelprops.games", true)) {
+            Map<String, String> gamePropsToSpoof = null;
+            if (packagesToChangeROG1.contains(packageName)) {
+                dlog("Spoofing as Asus ROG 1 for: " + packageName);
+                gamePropsToSpoof = asusROG1Props;
+            } else if (packagesToChangeROG3.contains(packageName)) {
+                dlog("Spoofing as Asus ROG 3 for: " + packageName);
+                gamePropsToSpoof = asusROG3Props;
+            } else if (packagesToChangeXP5.contains(packageName)) {
+                dlog("Spoofing as Sony Xperia 5 for: " + packageName);
+                gamePropsToSpoof = xperia5Props;
+            } else if (packagesToChangeOP8P.contains(packageName)) {
+                dlog("Spoofing as Oneplus 8 Pro for: " + packageName);
+                gamePropsToSpoof = op8ProProps;
+            } else if (packagesToChangeOP9R.contains(packageName)) {
+                dlog("Spoofing as Oneplus 9R for: " + packageName);
+                gamePropsToSpoof = op9RProps;
+            } else if (packagesToChange11T.contains(packageName)) {
+                dlog("Spoofing as Xiaomi Mi 11T for: " + packageName);
+                gamePropsToSpoof = xmMi11TProps;
+            } else if (packagesToChangeF4.contains(packageName)) {
+                dlog("Spoofing as Xiaomi F4 for: " + packageName);
+                gamePropsToSpoof = xmF4Props;
+            }
+            if (gamePropsToSpoof != null) {
+                gamePropsToSpoof.forEach((k, v) -> setPropValue(k, v));
+            }
         }
     }
 
