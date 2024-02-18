@@ -36,6 +36,8 @@ import com.android.internal.R;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PropImitationHooks {
 
@@ -45,6 +47,7 @@ public class PropImitationHooks {
     private static final String PACKAGE_ARCORE = "com.google.ar.core";
     private static final String PACKAGE_FINSKY = "com.android.vending";
     private static final String PACKAGE_GMS = "com.google.android.gms";
+    private static final String PACKAGE_GPHOTOS = "com.google.android.apps.photos";
     private static final String PROCESS_GMS_UNSTABLE = PACKAGE_GMS + ".unstable";
     private static final String PACKAGE_NETFLIX = "com.netflix.mediaclient";
     private static final String PACKAGE_GPHOTOS = "com.google.android.apps.photos";
@@ -79,6 +82,46 @@ public class PropImitationHooks {
     private static volatile String sProcessName;
     private static volatile boolean sIsPixelDevice, sIsGms, sIsFinsky, sIsPhotos;
 
+    private static final Map<String, String> propsToChangePixel8Pro;
+    private static final Map<String, String> propsToChangePixelXL;
+
+    private static final String[] packagesToChangePixel8Pro = {
+            "com.android.vending",
+            "com.google.android.apps.customization.pixel",
+            "com.google.android.apps.emojiwallpaper",
+            "com.google.android.apps.privacy.wildlife",
+            "com.google.android.apps.subscriptions.red",
+            "com.google.android.apps.wallpaper",
+            "com.google.android.apps.wallpaper.pixel",
+            "com.google.android.googlequicksearchbox",
+            "com.google.android.wallpaper.effects",
+            "com.google.android.apps.bard",
+            "com.google.pixel.livewallpaper",
+            "com.nhs.online.nhsonline",
+            "com.netflix.mediaclient"
+    };
+
+    static {
+        propsToChangePixel8Pro = new HashMap<>();
+        propsToChangePixel8Pro.put("BRAND", "google");
+        propsToChangePixel8Pro.put("MANUFACTURER", "Google");
+        propsToChangePixel8Pro.put("DEVICE", "husky");
+        propsToChangePixel8Pro.put("PRODUCT", "husky");
+        propsToChangePixel8Pro.put("HARDWARE", "husky");
+        propsToChangePixel8Pro.put("MODEL", "Pixel 8 Pro");
+        propsToChangePixel8Pro.put("ID", "UQ1A.240205.004");
+        propsToChangePixel8Pro.put("FINGERPRINT", "google/husky/husky:14/UQ1A.240205.004/11269751:user/release-keys");
+        propsToChangePixelXL = new HashMap<>();
+        propsToChangePixelXL.put("BRAND", "google");
+        propsToChangePixelXL.put("MANUFACTURER", "Google");
+        propsToChangePixelXL.put("DEVICE", "marlin");
+        propsToChangePixelXL.put("PRODUCT", "marlin");
+        propsToChangePixelXL.put("HARDWARE", "marlin");
+        propsToChangePixelXL.put("MODEL", "Pixel XL");
+        propsToChangePixelXL.put("ID", "QP1A.191005.007.A3");
+        propsToChangePixelXL.put("FINGERPRINT", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
+    }
+
     public static void setProps(Context context) {
         final String packageName = context.getPackageName();
         final String processName = Application.getProcessName();
@@ -106,16 +149,29 @@ public class PropImitationHooks {
 
         /* Set Certified Properties for GMSCore
          * Set Stock Fingerprint for ARCore
-         * Set custom model for Netflix
          */
+
         if (sIsGms) {
             setCertifiedPropsForGms();
         } else if (!sStockFp.isEmpty() && packageName.equals(PACKAGE_ARCORE)) {
             dlog("Setting stock fingerprint for: " + packageName);
             setPropValue("FINGERPRINT", sStockFp);
-        } else if (!sNetflixModel.isEmpty() && packageName.equals(PACKAGE_NETFLIX)) {
-            dlog("Setting model to " + sNetflixModel + " for Netflix");
-            setPropValue("MODEL", sNetflixModel);
+        } 
+
+        // Set Pixel Props for Pixel features
+
+        else if (packageName.equals(PACKAGE_GPHOTOS)) {
+            for (Map.Entry<String, String> prop : propsToChangePixelXL.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
+        } else if (Arrays.asList(packagesToChangePixel8Pro).contains(packageName)) {
+            for (Map.Entry<String, String> prop : propsToChangePixel8Pro.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
         }
     }
 
@@ -168,18 +224,33 @@ public class PropImitationHooks {
     }
 
     private static void setCertifiedProps() {
-        for (String entry : sCertifiedProps) {
-            // Each entry must be of the format FIELD:value
-            final String[] fieldAndProp = entry.split(":", 2);
-            if (fieldAndProp.length != 2) {
-                Log.e(TAG, "Invalid entry in certified props: " + entry);
-                continue;
+        String allKeys = SystemProperties.get("persist.sys.somethingos.gms.list");
+        if (allKeys != null && !allKeys.isEmpty()) {
+            String[] keys = allKeys.split("\\+");
+            for (String key : keys) {
+                String value = SystemProperties.get("persist.sys.somethingos.gms." + key);
+                if (key.equals("SECURITY_PATCH")) {
+                    setSystemProperty(PROP_SECURITY_PATCH, value);
+                } else if (key.equals("FIRST_API_LEVEL")) {
+                    setSystemProperty(PROP_FIRST_API_LEVEL, value);
+                } else {
+                    setPropValue(key, value);
+                }
             }
-            setPropValue(fieldAndProp[0], fieldAndProp[1]);
+        } else {
+            for (String entry : sCertifiedProps) {
+                // Each entry must be of the format FIELD:value
+                final String[] fieldAndProp = entry.split(":", 2);
+                if (fieldAndProp.length != 2) {
+                    Log.e(TAG, "Invalid entry in certified props: " + entry);
+                    continue;
+                }
+                setPropValue(fieldAndProp[0], fieldAndProp[1]);
+            }
+            setSystemProperty(PROP_SECURITY_PATCH, Build.VERSION.SECURITY_PATCH);
+            setSystemProperty(PROP_FIRST_API_LEVEL,
+                    Integer.toString(Build.VERSION.DEVICE_INITIAL_SDK_INT));
         }
-        setSystemProperty(PROP_SECURITY_PATCH, Build.VERSION.SECURITY_PATCH);
-        setSystemProperty(PROP_FIRST_API_LEVEL,
-                Integer.toString(Build.VERSION.DEVICE_INITIAL_SDK_INT));
     }
 
     private static void setSystemProperty(String name, String value) {
