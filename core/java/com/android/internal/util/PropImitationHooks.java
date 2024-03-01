@@ -50,7 +50,6 @@ public class PropImitationHooks {
     private static final String PACKAGE_GPHOTOS = "com.google.android.apps.photos";
     private static final String PROCESS_GMS_UNSTABLE = PACKAGE_GMS + ".unstable";
     private static final String PACKAGE_NETFLIX = "com.netflix.mediaclient";
-    private static final String PACKAGE_GPHOTOS = "com.google.android.apps.photos";
 
     private static final String PROP_SECURITY_PATCH = "persist.sys.pihooks.security_patch";
     private static final String PROP_FIRST_API_LEVEL = "persist.sys.pihooks.first_api_level";
@@ -160,13 +159,13 @@ public class PropImitationHooks {
 
         // Set Pixel Props for Pixel features
 
-        else if (packageName.equals(PACKAGE_GPHOTOS)) {
+        else if (packageName.equals(PACKAGE_GPHOTOS) && !SystemProperties.get("persist.sys.somethingos.gphotos").equals("false")) {
             for (Map.Entry<String, String> prop : propsToChangePixelXL.entrySet()) {
                 String key = prop.getKey();
                 String value = prop.getValue();
                 setPropValue(key, value);
             }
-        } else if (Arrays.asList(packagesToChangePixel8Pro).contains(packageName)) {
+        } else if (Arrays.asList(packagesToChangePixel8Pro).contains(packageName) && !SystemProperties.get("persist.sys.somethingos.gapps").equals("false")) {
             for (Map.Entry<String, String> prop : propsToChangePixel8Pro.entrySet()) {
                 String key = prop.getKey();
                 String value = prop.getValue();
