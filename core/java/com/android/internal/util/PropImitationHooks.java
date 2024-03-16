@@ -81,8 +81,87 @@ public class PropImitationHooks {
     private static volatile String sProcessName;
     private static volatile boolean sIsPixelDevice, sIsGms, sIsFinsky, sIsPhotos;
 
+    // Pixels
     private static final Map<String, String> propsToChangePixel8Pro;
     private static final Map<String, String> propsToChangePixelXL;
+
+    // Games
+    private static final Map<String, String> propsToChangeROG6;
+    private static final Map<String, String> propsToChangeXP5;
+    private static final Map<String, String> propsToChangeOP8P;
+    private static final Map<String, String> propsToChangeOP9P;
+    private static final Map<String, String> propsToChangeMI11TP;
+    private static final Map<String, String> propsToChangeMI13P;
+    private static final Map<String, String> propsToChangeF5;
+    private static final Map<String, String> propsToChangeBS4;
+
+    // Packages to Spoof as ROG Phone 6
+    private static final String[] packagesToChangeROG6 = {
+            "com.activision.callofduty.shooter",
+            "com.ea.gp.fifamobile",
+            "com.gameloft.android.ANMP.GloftA9HM",
+            "com.madfingergames.legends",
+            "com.pearlabyss.blackdesertm",
+            "com.pearlabyss.blackdesertm.gl"
+    };
+
+    // Packages to Spoof as Xperia 5
+    private static final String[] packagesToChangeXP5 = {
+            "com.garena.game.codm",
+            "com.tencent.tmgp.kr.codm",
+            "com.vng.codmvn"
+    };
+
+    // Packages to Spoof as OnePlus 8 Pro
+    private static final String[] packagesToChangeOP8P = {
+            "com.netease.lztgglobal",
+            "com.pubg.imobile",
+            "com.pubg.krmobile",
+            "com.rekoo.pubgm",
+            "com.riotgames.league.wildrift",
+            "com.riotgames.league.wildrifttw",
+            "com.riotgames.league.wildriftvn",
+            "com.riotgames.league.teamfighttactics",
+            "com.riotgames.league.teamfighttacticstw",
+            "com.riotgames.league.teamfighttacticsvn",
+            "com.tencent.ig",
+            "com.tencent.tmgp.pubgmhd",
+            "com.vng.pubgmobile"
+    };
+
+    // Packages to Spoof as OnePlus 9 Pro
+    private static final String[] packagesToChangeOP9P = {
+            "com.epicgames.fortnite",
+            "com.epicgames.portal",
+            "com.tencent.lolm"
+    };
+
+    // Packages to Spoof as Mi 11T Pro
+    private static final String[] packagesToChangeMI11TP = {
+            "com.ea.gp.apexlegendsmobilefps",
+            "com.levelinfinite.hotta.gp",
+            "com.supercell.clashofclans",
+            "com.vng.mlbbvn"
+    };
+
+    // Packages to Spoof as Xiaomi 13 Pro
+    private static final String[] packagesToChangeMI13P = {
+            "com.levelinfinite.sgameGlobal",
+            "com.tencent.tmgp.sgame"
+    };
+
+    // Packages to Spoof as POCO F5
+    private static final String[] packagesToChangeF5 = {
+            "com.dts.freefiremax",
+            "com.dts.freefireth",
+            "com.mobile.legends"
+    };
+
+    // Packages to Spoof as Black Shark 4
+    private static final String[] packagesToChangeBS4 = {
+            "com.proximabeta.mf.uamo"
+    };
+
 
     private static final String[] packagesToChangePixel8Pro = {
             "com.android.vending",
@@ -119,11 +198,41 @@ public class PropImitationHooks {
         propsToChangePixelXL.put("MODEL", "Pixel XL");
         propsToChangePixelXL.put("ID", "QP1A.191005.007.A3");
         propsToChangePixelXL.put("FINGERPRINT", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
+        propsToChangeROG6 = new HashMap<>();
+        propsToChangeROG6.put("BRAND", "asus");
+        propsToChangeROG6.put("MANUFACTURER", "asus");
+        propsToChangeROG6.put("DEVICE", "AI2201");
+        propsToChangeROG6.put("MODEL", "ASUS_AI2201");
+        propsToChangeXP5 = new HashMap<>();
+        propsToChangeXP5.put("MODEL", "SO-52A");
+        propsToChangeXP5.put("MANUFACTURER", "Sony");
+        propsToChangeOP8P = new HashMap<>();
+        propsToChangeOP8P.put("MODEL", "IN2020");
+        propsToChangeOP8P.put("MANUFACTURER", "OnePlus");
+        propsToChangeOP9P = new HashMap<>();
+        propsToChangeOP9P.put("MODEL", "LE2123");
+        propsToChangeOP9P.put("MANUFACTURER", "OnePlus");
+        propsToChangeMI11TP = new HashMap<>();
+        propsToChangeMI11TP.put("MODEL", "2107113SI");
+        propsToChangeMI11TP.put("MANUFACTURER", "Xiaomi");
+        propsToChangeMI13P = new HashMap<>();
+        propsToChangeMI13P.put("BRAND", "Xiaomi");
+        propsToChangeMI13P.put("MANUFACTURER", "Xiaomi");
+        propsToChangeMI13P.put("MODEL", "2210132C");
+        propsToChangeF5 = new HashMap<>();
+        propsToChangeF5.put("MODEL", "23049PCD8G");
+        propsToChangeF5.put("MANUFACTURER", "Xiaomi");
+        propsToChangeBS4 = new HashMap<>();
+        propsToChangeBS4.put("MODEL", "2SM-X706B");
+        propsToChangeBS4.put("MANUFACTURER", "blackshark");
     }
 
     public static void setProps(Context context) {
         final String packageName = context.getPackageName();
         final String processName = Application.getProcessName();
+        String spoofGames = System.getProperty("persist.sys.somethingos.spoofgames");
+        String spoofGPhotos = System.getProperty("persist.sys.somethingos.gphotos");
+        String spoofGApps = System.getProperty("persist.sys.somethingos.gapps");
 
         if (TextUtils.isEmpty(packageName) || TextUtils.isEmpty(processName)) {
             Log.e(TAG, "Null package or process name");
@@ -159,14 +268,78 @@ public class PropImitationHooks {
 
         // Set Pixel Props for Pixel features
 
-        else if (packageName.equals(PACKAGE_GPHOTOS) && !SystemProperties.get("persist.sys.somethingos.gphotos").equals("false")) {
+        if (spoofGames != null && spoofGames.equals("true")) {
+            spoofGames(packageName);
+        }
+
+        else if (packageName.equals(PACKAGE_GPHOTOS) && !spoofGPhotos.equals("false")) {
             for (Map.Entry<String, String> prop : propsToChangePixelXL.entrySet()) {
                 String key = prop.getKey();
                 String value = prop.getValue();
                 setPropValue(key, value);
             }
-        } else if (Arrays.asList(packagesToChangePixel8Pro).contains(packageName) && !SystemProperties.get("persist.sys.somethingos.gapps").equals("false")) {
+        } else if (Arrays.asList(packagesToChangePixel8Pro).contains(packageName) && !spoofGApps.equals("false")) {
             for (Map.Entry<String, String> prop : propsToChangePixel8Pro.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
+        }
+    }
+
+    private static void spoofGames(String packageName) {
+        if (Arrays.asList(packagesToChangeROG6).contains(packageName)) {
+            if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
+            for (Map.Entry<String, String> prop : propsToChangeROG6.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
+        } else if (Arrays.asList(packagesToChangeXP5).contains(packageName)) {
+            if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
+            for (Map.Entry<String, String> prop : propsToChangeXP5.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
+        } else if (Arrays.asList(packagesToChangeOP8P).contains(packageName)) {
+            if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
+            for (Map.Entry<String, String> prop : propsToChangeOP8P.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
+        } else if (Arrays.asList(packagesToChangeOP9P).contains(packageName)) {
+            if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
+            for (Map.Entry<String, String> prop : propsToChangeOP9P.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
+        } else if (Arrays.asList(packagesToChangeMI11TP).contains(packageName)) {
+            if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
+            for (Map.Entry<String, String> prop : propsToChangeMI11TP.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
+        } else if (Arrays.asList(packagesToChangeMI13P).contains(packageName)) {
+            if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
+            for (Map.Entry<String, String> prop : propsToChangeMI13P.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
+        } else if (Arrays.asList(packagesToChangeF5).contains(packageName)) {
+            if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
+            for (Map.Entry<String, String> prop : propsToChangeF5.entrySet()) {
+                String key = prop.getKey();
+                String value = prop.getValue();
+                setPropValue(key, value);
+            }
+        } else if (Arrays.asList(packagesToChangeBS4).contains(packageName)) {
+            if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
+            for (Map.Entry<String, String> prop : propsToChangeBS4.entrySet()) {
                 String key = prop.getKey();
                 String value = prop.getValue();
                 setPropValue(key, value);
