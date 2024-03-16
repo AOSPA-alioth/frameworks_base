@@ -230,9 +230,9 @@ public class PropImitationHooks {
     public static void setProps(Context context) {
         final String packageName = context.getPackageName();
         final String processName = Application.getProcessName();
-        String spoofGames = System.getProperty("persist.sys.somethingos.spoofgames");
-        String spoofGPhotos = System.getProperty("persist.sys.somethingos.gphotos");
-        String spoofGApps = System.getProperty("persist.sys.somethingos.gapps");
+        String spoofGames = System.getProperty("persist.sys.somethingos.spoofgames", "false");
+        String spoofGPhotos = System.getProperty("persist.sys.somethingos.gphotos", "false");
+        String spoofGApps = System.getProperty("persist.sys.somethingos.gapps", "false");
 
         if (TextUtils.isEmpty(packageName) || TextUtils.isEmpty(processName)) {
             Log.e(TAG, "Null package or process name");
