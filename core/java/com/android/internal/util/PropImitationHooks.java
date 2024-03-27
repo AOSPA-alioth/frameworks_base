@@ -51,6 +51,10 @@ public class PropImitationHooks {
     private static final String PROCESS_GMS_UNSTABLE = PACKAGE_GMS + ".unstable";
     private static final String PACKAGE_NETFLIX = "com.netflix.mediaclient";
 
+    private static final String spoofGames = "persist.sys.somethingos.spoofgames";
+    private static final String spoofGPhotos = "persist.sys.somethingos.gphotos";
+    private static final String spoofGApps = "persist.sys.somethingos.gapps";
+
     private static final String PROP_SECURITY_PATCH = "persist.sys.pihooks.security_patch";
     private static final String PROP_FIRST_API_LEVEL = "persist.sys.pihooks.first_api_level";
 
@@ -230,9 +234,6 @@ public class PropImitationHooks {
     public static void setProps(Context context) {
         final String packageName = context.getPackageName();
         final String processName = Application.getProcessName();
-        String spoofGames = System.getProperty("persist.sys.somethingos.spoofgames", "false");
-        String spoofGPhotos = System.getProperty("persist.sys.somethingos.gphotos", "false");
-        String spoofGApps = System.getProperty("persist.sys.somethingos.gapps", "false");
 
         if (TextUtils.isEmpty(packageName) || TextUtils.isEmpty(processName)) {
             Log.e(TAG, "Null package or process name");
@@ -268,22 +269,22 @@ public class PropImitationHooks {
 
         // Set Pixel Props for Pixel features
 
-        if (spoofGames != null && spoofGames.equals("true")) {
-            spoofGames(packageName);
-        }
-
-        else if (packageName.equals(PACKAGE_GPHOTOS) && !spoofGPhotos.equals("false")) {
+        else if (packageName.equals(PACKAGE_GPHOTOS) && SystemProperties.getBoolean(spoofGPhotos, false)) {
             for (Map.Entry<String, String> prop : propsToChangePixelXL.entrySet()) {
                 String key = prop.getKey();
                 String value = prop.getValue();
                 setPropValue(key, value);
             }
-        } else if (Arrays.asList(packagesToChangePixel8Pro).contains(packageName) && !spoofGApps.equals("false")) {
+        } else if (Arrays.asList(packagesToChangePixel8Pro).contains(packageName) && SystemProperties.getBoolean(spoofGApps, false)) {
             for (Map.Entry<String, String> prop : propsToChangePixel8Pro.entrySet()) {
                 String key = prop.getKey();
                 String value = prop.getValue();
                 setPropValue(key, value);
             }
+        }
+
+        if (SystemProperties.getBoolean(spoofGames, false)) {
+            spoofGames(packageName);
         }
     }
 
