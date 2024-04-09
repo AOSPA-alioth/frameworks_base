@@ -65,6 +65,14 @@ public class PropImitationHooks {
         "PIXEL_EXPERIENCE"
     );
 
+    private static final Set<String> sGphotosFeatures = Set.of(
+        "NEXUS_PRELOAD",
+        "nexus_preload",
+        "PIXEL_EXPERIENCE",
+        "PIXEL_PRELOAD",
+        "PIXEL_2016_PRELOAD"
+    );
+
     private static volatile String[] sCertifiedProps;
     private static volatile String sStockFp, sNetflixModel;
 
@@ -223,6 +231,9 @@ public class PropImitationHooks {
     }
 
     public static boolean hasSystemFeature(String name, boolean has) {
+        if (sIsPhotos && SystemProperties.getBoolean(spoofGPhotos, false) && sGphotosFeatures.stream().anyMatch(name::contains)) {
+            return true;
+        }
         if (sIsPhotos && !sIsPixelDevice && has
                 && sPixelFeatures.stream().anyMatch(name::contains)) {
             dlog("Blocked system feature " + name + " for Google Photos");
