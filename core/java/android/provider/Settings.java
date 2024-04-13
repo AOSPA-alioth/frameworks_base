@@ -6060,6 +6060,18 @@ public final class Settings {
          */
         @Readable
         public static final String NOTIFICATION_VIBRATION_PATTERN = "notification_vibration_pattern";
+        
+        /**
+         * Wheter to show network traffic indicator in statusbar
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_STATE = "network_traffic_state";
+
+        /**
+         * Network traffic inactivity threshold
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD = "network_traffic_autohide_threshold";
 
 	/**
          * @hide
