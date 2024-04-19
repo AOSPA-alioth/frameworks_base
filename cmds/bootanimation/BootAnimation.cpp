@@ -18,6 +18,8 @@
 #define LOG_TAG "BootAnimation"
 
 #include <vector>
+#include <string>
+#include <cstdlib>
 
 #include <stdint.h>
 #include <inttypes.h>
@@ -727,6 +729,24 @@ bool BootAnimation::findBootAnimationFileInternal(const std::vector<std::string>
     return false;
 }
 
+std::string getBootAnimationPath() {
+    std::string propValue = android::base::GetProperty("persist.sys.somethingos.bootanimation", "");
+
+    static const std::unordered_map<std::string, std::string> bootAnimationPaths {
+        {"dot", "/product/media/dots.zip"},
+        {"somethingos", "/product/media/bootanimation.zip"},
+        {"googlish", "/product/media/googlish.zip"},
+        {"pixel", "/product/media/pixel.zip"}
+    };
+
+    auto it = bootAnimationPaths.find(propValue);
+    if (it != bootAnimationPaths.end()) {
+        return it->second;
+    } else {
+        return "/product/media/bootanimation.zip";
+    }
+}
+
 void BootAnimation::findBootAnimationFile() {
 
     std::string custAnimProp = !mShuttingDown ?
@@ -742,7 +762,7 @@ void BootAnimation::findBootAnimationFile() {
 
     const bool playDarkAnim = android::base::GetIntProperty("ro.boot.theme", 0) == 1;
     static const std::vector<std::string> bootFiles = {
-        APEX_BOOTANIMATION_FILE, playDarkAnim ? PRODUCT_BOOTANIMATION_DARK_FILE : PRODUCT_BOOTANIMATION_FILE,
+        APEX_BOOTANIMATION_FILE, playDarkAnim ? PRODUCT_BOOTANIMATION_DARK_FILE : getBootAnimationPath(),
         OEM_BOOTANIMATION_FILE, SYSTEM_BOOTANIMATION_FILE
     };
     static const std::vector<std::string> shutdownFiles = {
