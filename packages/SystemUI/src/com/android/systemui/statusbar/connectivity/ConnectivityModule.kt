@@ -54,6 +54,12 @@ interface ConnectivityModule {
     @StringKey(AirplaneModeTile.TILE_SPEC)
     fun bindAirplaneModeTile(airplaneModeTile: AirplaneModeTile): QSTileImpl<*>
 
+    /** Inject BluetoothTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(BluetoothTile.TILE_SPEC)
+    fun bindBluetoothTile(bluetoothTile: BluetoothTile): QSTileImpl<*>
+
     /** Inject DataSaverTile into tileMap in QSModule */
     @Binds
     @IntoMap
