@@ -31,4 +31,7 @@
     <!-- Network traffic -->
      <dimen name="network_traffic_width">25sp</dimen>
 
+    <!-- QuickQS BrightnessBar -->
+    <dimen name="new_qqs_brightness_margin_top">4dp</dimen>
+
 </resources>
