@@ -485,11 +485,6 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
                             mDeferredThemeEvaluation = true;
                             return;
                         }
-                        if (mSkipSettingChange) {
-                            if (DEBUG) Log.d(TAG, "Skipping setting change");
-                            mSkipSettingChange = false;
-                            return;
-                        }
                         reevaluateSystemTheme(true /* forceReload */);
                     }
                 },
@@ -793,6 +788,15 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
             categoryToPackage.put(OVERLAY_CATEGORY_DYNAMIC_COLOR, mDynamicOverlay.getIdentifier());
         }
 
+        boolean isBlackTheme = Settings.Secure.getIntForUser(
+                mContext.getContentResolver(), Settings.Secure.SYSTEM_BLACK_THEME,
+                0, currentUser) == 1 && isNightMode();
+        if (categoryToPackage.containsKey(OVERLAY_CATEGORY_SYSTEM_PALETTE) && isBlackTheme) {
+            OverlayIdentifier blackTheme = new OverlayIdentifier(mThemeManager.OVERLAY_BLACK_THEME);
+            categoryToPackage.put(OVERLAY_CATEGORY_SYSTEM_PALETTE, blackTheme);
+        }
+        mThemeManager.applyBlackTheme(isBlackTheme);
+
         Set<UserHandle> managedProfiles = new HashSet<>();
         for (UserInfo userInfo : mUserManager.getEnabledProfiles(currentUser)) {
             if (userInfo.isManagedProfile()) {
@@ -800,14 +804,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
             }
         }
 
-        boolean nightMode = (mContext.getResources().getConfiguration().uiMode
-                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        boolean isBlackTheme = mSecureSettings.getInt(Settings.Secure.SYSTEM_BLACK_THEME, 0) == 1
-                                && nightMode;
-        mThemeManager.setIsBlackTheme(isBlackTheme);
-
-        if (colorSchemeIsApplied(managedProfiles) 
-                && !mThemeManager.shouldApplyBlackThemeNow()) {
+        if (colorSchemeIsApplied(managedProfiles)) {
             Log.d(TAG, "Skipping overlay creation. Theme was already: " + mColorScheme);
             return;
         }
@@ -827,8 +824,6 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
             mThemeManager.applyCurrentUserOverlays(categoryToPackage, null, currentUser,
                     managedProfiles);
         }
-
-        mThemeManager.applyBlackTheme(isBlackTheme);
     }
 
     private Style fetchThemeStyleFromSetting() {

@@ -243,27 +243,13 @@ public class ThemeOverlayApplier implements Dumpable {
         });
     }
 
-    public void setIsBlackTheme(boolean black) {
-        mIsBlackTheme = black;
-    }
-
-    public boolean shouldApplyBlackThemeNow() {
-        OverlayInfo info = null;
-        try {
-            info = mOverlayManager.getOverlayInfo("com.android.system.theme.black", UserHandle.SYSTEM);
-        } catch (Exception e) { }
-        if ((info != null && info.isEnabled() && !mIsBlackTheme) 
-                || (info != null && !info.isEnabled() && mIsBlackTheme)) {
-            return true;
-        } else {
-            return false;
-        } 
-    }
+    protected static final String OVERLAY_BLACK_THEME =
+            "com.android.system.theme.black";
 
     public void applyBlackTheme(boolean enable) {
         mBgExecutor.execute(() -> {
             try {
-                mOverlayManager.setEnabled("com.android.system.theme.black",
+                mOverlayManager.setEnabled(OVERLAY_BLACK_THEME,
                         enable, UserHandle.SYSTEM);
             } catch (SecurityException | IllegalStateException e) {
                 Log.e(TAG, "setEnabled failed", e);
