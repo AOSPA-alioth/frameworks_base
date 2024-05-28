@@ -246,6 +246,7 @@ public class PropImitationHooks {
             return;
         }
 
+        sCertifiedProps = res.getStringArray(R.array.config_certifiedBuildProperties);
         sStockFp = res.getString(R.string.config_stockFingerprint);
         sNetflixModel = res.getString(R.string.config_netflixSpoofModel);
 
@@ -366,6 +367,10 @@ public class PropImitationHooks {
     }
 
     private static void setCertifiedPropsForGms() {
+        if (sCertifiedProps.length == 0) {
+            dlog("Certified props are not set");
+            return;
+        }
         final boolean was = isGmsAddAccountActivityOnTop();
         final TaskStackListener taskStackListener = new TaskStackListener() {
             @Override
@@ -405,6 +410,19 @@ public class PropImitationHooks {
                     setPropValue(key, value);
                 }
             }
+        } else {
+            for (String entry : sCertifiedProps) {
+                // Each entry must be of the format FIELD:value
+                final String[] fieldAndProp = entry.split(":", 2);
+                if (fieldAndProp.length != 2) {
+                    Log.e(TAG, "Invalid entry in certified props: " + entry);
+                    continue;
+                }
+                setPropValue(fieldAndProp[0], fieldAndProp[1]);
+            }
+            setSystemProperty(PROP_SECURITY_PATCH, Build.VERSION.SECURITY_PATCH);
+            setSystemProperty(PROP_FIRST_API_LEVEL,
+                    Integer.toString(Build.VERSION.DEVICE_INITIAL_SDK_INT));
         }
     }
 
