@@ -113,7 +113,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -6087,11 +6086,6 @@ public final class Settings {
          */
         public static final String NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD = "network_traffic_autohide_threshold";
 
-	/**
-         * @hide
-         */
-        public static final String VOLUME_MEDIA_OUTPUT_TOGGLE = "volume_media_output_toggle";
-
         /** 
          * Back gesture activation height 
          * n/o sixths reduced in height (0 = nothing, default)
@@ -6345,12 +6339,6 @@ public final class Settings {
             INSTANT_APP_SETTINGS.add(SOUND_EFFECTS_ENABLED);
             INSTANT_APP_SETTINGS.add(ACCELEROMETER_ROTATION);
         }
-
-        /**
-         * Show app volume rows in volume panel
-         * @hide
-         */
-        public static final String SHOW_APP_VOLUME = "show_app_volume";
 
         /**
          * When to use Wi-Fi calling
@@ -11920,14 +11908,6 @@ public final class Settings {
          * @hide
          */
         public static final String SYSTEM_BLACK_THEME = "system_black_theme";
-
-        /**
-         * Whether volume panel should appear on the left (or right).
-         * 0 = false (on the right)
-         * 1 = true (on the left)
-         * @hide
-         */
-        public static final String VOLUME_PANEL_ON_LEFT = "volume_panel_on_left";
 
         /**
          * Control whether to hide ADB and Developer settings enable status.
@@ -20246,11 +20226,6 @@ public final class Settings {
         public static final String ACTION_VOLUME =
                 "android.settings.panel.action.VOLUME";
 
-        /**
-         * @hide
-         */
-        public static final String ACTION_APP_VOLUME =
-                "android.settings.panel.action.APP_VOLUME";
     }
 
     /**
